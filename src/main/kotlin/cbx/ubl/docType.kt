@@ -1,32 +1,35 @@
 package cbx.ubl
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 data class Order(
-    val CbxVersionID: String? = "0.1",
-    val OrderNumber: String,
-    val IssueDate: LocalDate,
-    val IssueTime: LocalTime,
-    val DocumentCurrencyCode: CurrencyCode? = CurrencyCode.USD,
-    val BuyerCustomerParty: Party,
-    val SellerSupplierParty: Party,
-    val OrderLine: List<LineItem>,
+    val cbxVersionId: String? = "0.1",
+    val orderNumber: String,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    val issueDateTime: LocalDateTime,
+    val documentCurrencyCode: CurrencyCode? = CurrencyCode.USD,
+    val buyerCustomerParty: Party,
+    val sellerSupplierParty: Party,
+    val orderLine: List<LineItem>,
 
-    val AccountingCostCode: List<Code>? = null,
-    val AdditionalDocumentReference: List<DocumentReference>? = null,
-    val AllowanceCharge: List<AllowanceCharge>? = null,
-    val AnticipatedMonetaryTotal: MonetaryTotal? = null,
-    val Contract: List<Contract>? = null,
-    val CustomizationID: List<Id>?=null,
-    val Delivery: List<Delivery>? = null,
-    val Note: String? = null,
-    val OrderDocumentReference: List<DocumentReference>? = null,
-    val OriginatorCustomerParty: Party? = null,
-    val OriginatorDocumentReference: List<DocumentReference>? = null,
-    val QuotationDocumentReference: List<DocumentReference>? = null,
-    val TaxTotal: List<TaxTotal>? = null,
-    val ValidityPeriod: Period? = null,
+    val accountingCostCode: List<Code>? = null,
+    val additionalDocumentReference: List<DocumentReference>? = null,
+    val allowanceCharge: List<AllowanceCharge>? = null,
+    val anticipatedMonetaryTotal: MonetaryTotal? = null,
+    val contract: List<Contract>? = null,
+    val customizationId: List<Id>?=null,
+    val delivery: List<Delivery>? = null,
+    val note: String? = null,
+    val orderDocumentReference: List<DocumentReference>? = null,
+    val originatorCustomerParty: Party? = null,
+    val originatorDocumentReference: List<DocumentReference>? = null,
+    val quotationDocumentReference: List<DocumentReference>? = null,
+    val taxTotal: List<TaxTotal>? = null,
+    val validityPeriod: Period? = null,
 
 
 )
@@ -40,7 +43,7 @@ data class Invoice(
     val ContractDocumentReference: List<DocumentReference>,
     val Delivery: Delivery,
     val DocumentCurrencyCode: Code,
-    val ID: List<Id>? = null, //would be OrderNumber
+    val Id: List<Id>? = null, //would be OrderNumber
     val InvoiceLine: List<LineItem>,
     val InvoicePeriod: Period,
     val InvoiceTypeCode: List<Code>,
@@ -53,7 +56,7 @@ data class Invoice(
     val PaymentTerms: String,
     val TaxPointDate: String,
     val TaxTotal: List<TaxTotal>,
-    val CbxVersionID: String,
+    val CbxVersionId: String,
 
 
 )

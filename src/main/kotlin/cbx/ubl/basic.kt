@@ -1,203 +1,206 @@
 package cbx.ubl
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 data class Id(
-    val IdContent: String,
-    val IdSchemeIdentifier: String? = "FreeText",
-    val IdAgencyIdentifier: String? = null
+    val idContent: String,
+    val idSchemeIdentifier: String? = "FreeText",
+    val idAgencyIdentifier: String? = null
 )
 
 data class Code(
-    val CodeContent: String,
-    val CodeListIdentifier: String? = "FreeText",
-    val CodeListAgencyIdentifier: String? = null
+    val codeContent: String,
+    val codeListIdentifier: String? = "FreeText",
+    val codeListAgencyIdentifier: String? = null
 )
 
 data class Contact(
-    val Email: String? = null,
-    val Telefax: String? = null,
-    val Telephone: String
+    val email: String? = null,
+    val telefax: String? = null,
+    val telephone: String
 )
 
 data class Contract(
-    val ID: Id,
-    val ContractType: String? = "FreeText"
+    val id: Id,
+    val contractType: String? = "FreeText"
 )
 
 data class Address(
-    val BuildingNumber: String,
-    val StreetName: String,
-    val CityName: String? = null,
-    val CountrySubEntity: String? = null,
-    val Country: String? = null,
-    val PostalZone: String? = null,
-    val AdditionalStreetName: String? = null,
-    val Department: String? = null,
-    val Postbox: String? = null
+    val buildingNumber: String,
+    val streetName: String,
+    val cityName: String? = null,
+    val countrySubEntity: String? = null,
+    val country: String? = null,
+    val postalZone: String? = null,
+    val additionalStreetName: String? = null,
+    val department: String? = null,
+    val postbox: String? = null
 )
 
 data class Person(
-    val FirstName: String,
-    val FamilyName: String? = null,
-    val JobTitle: String? = null,
-    val MiddleName: String? = null
+    val firstName: String,
+    val familyName: String? = null,
+    val jobTitle: String? = null,
+    val middleName: String? = null
 )
 
 data class PartyTaxScheme(
-    val CompanyID: Id,
-    val TaxScheme: Id
+    val companyId: Id,
+    val taxScheme: Id
 )
 
 data class PartyLegalEntity(
-    val CompanyID: Id,
-    val RegistrationAddress: Address? = null,
-    val RegistrationName: String
+    val companyId: Id,
+    val registrationAddress: Address? = null,
+    val registrationName: String
 )
 
 data class EmbeddedDocumentBinaryObject(
-    val BinaryObjectContent: String,
-    val BinaryObjectMimeCode: String
+    val binaryObjectContent: String,
+    val binaryObjectMimeCode: String
 )
 
 data class Amount(
-    val AmountContent: Double,
-    val AmountCurrencyIdentifier: String? = CurrencyCode.USD.toString()
+    val amountContent: Double,
+    val amountCurrencyIdentifier: String? = CurrencyCode.USD.toString()
 )
 
 data class Attachment(
-    val EmbeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject? = null,
-    val ExternalReference: String? = null //url
+    val embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject? = null,
+    val externalReference: String? = null //url
 )
 
 data class AdditionalProperty(
-    val Name: String,
-    val Value: String
+    val name: String,
+    val value: String
 )
 
 
 data class Period(
-    val EndDate: LocalDateTime,
-    val StartDate: LocalDateTime
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    val endDate: LocalDateTime,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    val startDate: LocalDateTime
 )
 
 data class Quantity(
-    val QuantityContent: Int,
-    val QuantityUnitCode: String
+    val quantityContent: Int,
+    val quantityUnitCode: String
 )
 
 data class Price(
-    val AllowanceCharge: Amount? = null,
-    val BaseQuantity: Quantity? = null,
-    val PriceAmount: Amount
+    val allowanceCharge: Amount? = null,
+    val baseQuantity: Quantity? = null,
+    val priceAmount: Amount
 )
 
 data class Location(
-    val Address: Address,
-    val ID: Id? = null
+    val address: Address,
+    val id: Id? = null
 )
 
 data class Delivery(
-    val DeliveryLocation: Location,
-    val DeliveryPeriod: Period? = null,
-    val DeliveryParty: Party? = null,
-    val DeliveryTerms: List<DeliveryTerm>? = null
+    val deliveryLocation: Location,
+    val deliveryPeriod: Period? = null,
+    val deliveryParty: Party? = null,
+    val deliveryTerms: List<DeliveryTerm>? = null
 )
 
 data class DeliveryTerm(
-    val DeliveryLocation: Location? = null,
-    val ID: Id? = null,
-    val SpecialTerms: String
+    val deliveryLocation: Location? = null,
+    val id: Id? = null,
+    val specialTerms: String
 )
 
 data class DocumentReference(
-    val Attachment: List<Attachment>? = null,
-    val DocumentType: String? = null,
-    val ID: Id
+    val attachment: List<Attachment>? = null,
+    val documentType: String? = null,
+    val id: Id
 )
 
 data class TaxCategory(
-    val Id: Id?,
-    val Percent: Int,
-    val TaxScheme: Id?
+    val id: Id?,
+    val percent: Int,
+    val taxScheme: Id?
 )
 
 data class TaxSubtotal(
-    val TaxAmount: Amount,
-    val TaxCategory: TaxCategory,
-    val TaxableAmount: Amount
+    val taxAmount: Amount,
+    val taxCategory: TaxCategory,
+    val taxableAmount: Amount
 )
 
 data class TaxTotal(
-    val TaxAmount: Amount,
-    val TaxSubtotal: List<TaxSubtotal>? = listOf()
+    val taxAmount: Amount,
+    val taxSubtotal: List<TaxSubtotal>? = listOf()
 )
 
 //
 
 data class Party(
-    val Contact: List<Contact>? = null,
-    val EndpointID: List<Code>? = null,
-    val PartyIdentification: List<Id>,
-    val PartyLegalEntity: List<PartyLegalEntity>? = null,
-    val PartyName: String? = null,
-    val PartyTaxScheme: List<PartyTaxScheme>? = null,
-    val Person: List<Person>? = null,
-    val PostalAddress: List<Address>? = null
+    val contact: List<Contact>? = null,
+    val endpointId: List<Code>? = null,
+    val partyIdentification: List<Id>,
+    val partyLegalEntity: List<PartyLegalEntity>? = null,
+    val partyName: String? = null,
+    val partyTaxScheme: List<PartyTaxScheme>? = null,
+    val person: List<Person>? = null,
+    val postalAddress: List<Address>? = null
 )
 
 data class Item(
-    val AdditionalItemProperty: List<AdditionalProperty>? = null,
-    val ClassifiedTaxCategory: List<TaxCategory>? = null,
-    val CommodityClassification: List<Code>? = null,
-    val Description: String? = null,
-    val Name: String,
-    val SellersItemIdentification: List<Id>? = null,
-    val StandardItemIdentification: List<Id>? = null
+    val additionalItemProperty: List<AdditionalProperty>? = null,
+    val classifiedTaxCategory: List<TaxCategory>? = null,
+    val commodityClassification: List<Code>? = null,
+    val description: String? = null,
+    val name: String,
+    val sellersItemIdentification: List<Id>? = null,
+    val standardItemIdentification: List<Id>? = null
 )
 
 data class LineItem(
-    val ID: Id,
-    val Item: Item,
-    val Quantity: Quantity,
-    val Price: Price,
-    val AccountingCostCode: List<Code>? = null,
-    val AllowanceCharge: AllowanceCharge? = null,
-    val OriginatorParty: Party? = null,
-    val TaxAmount: List<TaxSubtotal>? = null,
-    val TaxTotal: Amount? = null ,
-    val Note: String? = null,
-    val LineExtensionAmount: Amount? = null,
-    val Delivery: List<Delivery>? = null,
-    val PartialDeliveryIndicator: Boolean? = false,
-    val LineReference: List<DocumentReference>? = null,
+    val id: Id,
+    val item: Item,
+    val quantity: Quantity,
+    val price: Price,
+    val accountingCostCode: List<Code>? = null,
+    val allowanceCharge: AllowanceCharge? = null,
+    val originatorParty: Party? = null,
+    val taxAmount: List<TaxSubtotal>? = null,
+    val taxTotal: Amount? = null ,
+    val note: String? = null,
+    val lineExtensionAmount: Amount? = null,
+    val delivery: List<Delivery>? = null,
+    val partialDeliveryIndicator: Boolean? = false,
+    val lineReference: List<DocumentReference>? = null,
 )
 
 data class PaymentMean(
-    val PayeeFinancialAccount: List<Id>?,
-    val PaymentChannelCode: String?,
-    val PaymentDueDate: String?,
-    val PaymentID: String,
-    val PaymentMeansCode: Code?
+    val payeeFinancialAccount: List<Id>?,
+    val paymentChannelCode: String?,
+    val paymentDueDate: String?,
+    val paymentId: String,
+    val paymentMeansCode: Code?
 )
 
 data class MonetaryTotal(
-    val AllowanceTotalAmount: Amount? = Amount(0.0),
-    val ChargeTotalAmount: Amount? = Amount(0.0),
-    val LineExtensionAmount: Amount? = Amount(0.0),
-    val PayableAmount: Amount,
-    val PayableRoundingAmount: Amount? = Amount(0.0),
-    val PrepaidAmount: Amount? = Amount(0.0),
-    val TaxExclusiveAmount: Amount? = Amount(0.0),
-    val TaxInclusiveAmount: Amount? = Amount(0.0)
+    val allowanceTotalAmount: Amount? = Amount(0.0),
+    val chargeTotalAmount: Amount? = Amount(0.0),
+    val lineExtensionAmount: Amount? = Amount(0.0),
+    val payableAmount: Amount,
+    val payableRoundingAmount: Amount? = Amount(0.0),
+    val prepaidAmount: Amount? = Amount(0.0),
+    val taxExclusiveAmount: Amount? = Amount(0.0),
+    val taxInclusiveAmount: Amount? = Amount(0.0)
 )
 
 data class AllowanceCharge(
-    val AllowanceChargeReason: String? = null,
-    val Amount: Amount,
-    val BaseAmount: Amount? = Amount(AmountContent = 0.0),
-    val ChargeIndicator: Boolean? = false,
-    val MultiplierFactorNumeric: Double? = 0.0
+    val allowanceChargeReason: String? = null,
+    val amount: Amount,
+    val baseAmount: Amount? = Amount(amountContent = 0.0),
+    val chargeIndicator: Boolean? = false,
+    val multiplierFactorNumeric: Double? = 0.0
 )
 
 

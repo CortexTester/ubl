@@ -31,8 +31,11 @@ import cbx.ubl.TaxTotal
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationConfig
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -55,139 +58,138 @@ class OrderTest() {
     @Test
     fun `Regular Order as request`() {
         var order = Order(
-            CbxVersionID = "0.1",
-            OrderNumber = "test order 01",
-            IssueDate = LocalDate.of(2021, Month.AUGUST, 2),
-            IssueTime = LocalTime.of(15, 24, 0, 0),
-            Note = "This is Order type unit test",
-            DocumentCurrencyCode = CurrencyCode.USD,
-            AccountingCostCode = listOf(
+            cbxVersionId = "0.1",
+            orderNumber = "test order 01",
+            issueDateTime = LocalDateTime.of(2021, 8,11, 11, 10, 42),
+            note = "This is Order type unit test",
+            documentCurrencyCode = CurrencyCode.USD,
+            accountingCostCode = listOf(
                 Code(
-                    CodeContent = "AFE1",
-                    CodeListAgencyIdentifier = EnergyCostCode.AFE.toString()
+                    codeContent = "AFE1",
+                    codeListAgencyIdentifier = EnergyCostCode.AFE.toString()
                 )
             ),
-            ValidityPeriod = Period(
-                StartDate = LocalDateTime.of(2021, Month.AUGUST, 2, 0, 0, 0, 0),
-                EndDate = LocalDateTime.of(2021, Month.NOVEMBER, 2, 0, 0, 0, 0)
+            validityPeriod = Period(
+                startDate = LocalDateTime.of(2021, Month.AUGUST, 2, 0, 0, 0, 0),
+                endDate = LocalDateTime.of(2021, Month.NOVEMBER, 2, 0, 0, 0, 0)
             ),
-            QuotationDocumentReference = listOf(
+            quotationDocumentReference = listOf(
                 DocumentReference(
-                    ID = Id(
-                        IdContent = "test quotation 01",
-                        IdSchemeIdentifier = ReferenceSchemeIdentifier.CbxQuotationNumber.toString()
+                    id = Id(
+                        idContent = "test quotation 01",
+                        idSchemeIdentifier = ReferenceSchemeIdentifier.CbxQuotationNumber.toString()
                     )
                 ),
                 DocumentReference(
-                    ID = Id(
-                        IdContent = "1",
-                        IdSchemeIdentifier = ReferenceSchemeIdentifier.CbxQuotationId.toString()
+                    id = Id(
+                        idContent = "1",
+                        idSchemeIdentifier = ReferenceSchemeIdentifier.CbxQuotationId.toString()
                     )
                 )
             ),
-            OrderDocumentReference = listOf(DocumentReference(ID = Id(IdContent = "RejectedOrder123"))),
-            OriginatorDocumentReference = listOf(DocumentReference(ID = Id(IdContent = "MAFO"))),
-            AdditionalDocumentReference = listOf(
+            orderDocumentReference = listOf(DocumentReference(id = Id(idContent = "RejectedOrder123"))),
+            originatorDocumentReference = listOf(DocumentReference(id = Id(idContent = "MAFO"))),
+            additionalDocumentReference = listOf(
                 DocumentReference(
-                    ID = Id(IdContent = "Att01"), DocumentType = "timesheet", Attachment = listOf(
-                        Attachment(ExternalReference = "thhps://local.cbx.com/att/att01.pdf"),
+                    id = Id(idContent = "Att01"), documentType = "timesheet", attachment = listOf(
+                        Attachment(externalReference = "thhps://local.cbx.com/att/att01.pdf"),
                         Attachment(
                             EmbeddedDocumentBinaryObject(
-                                BinaryObjectMimeCode = "application/pdf",
-                                BinaryObjectContent = "UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi"
+                                binaryObjectMimeCode = "application/pdf",
+                                binaryObjectContent = "UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi"
                             )
                         )
                     )
                 )
             ),
-            Contract = listOf(Contract(ID = Id(IdContent = "test contract 01"))),
-            BuyerCustomerParty = Party(
-                PartyIdentification = listOf(
+            contract = listOf(Contract(id = Id(idContent = "test contract 01"))),
+            buyerCustomerParty = Party(
+                partyIdentification = listOf(
                     Id(
-                        IdContent = "party01", //todo: correct as cbx int id
-                        IdSchemeIdentifier = PartyIdSchemeIdentifier.CBX.toString()
+                        idContent = "party01", //todo: correct as cbx int id
+                        idSchemeIdentifier = PartyIdSchemeIdentifier.CBX.toString()
                     ),
                     Id(
-                        IdContent = "987456321",
-                        IdSchemeIdentifier = PartyIdSchemeIdentifier.DUNS.toString()
+                        idContent = "987456321",
+                        idSchemeIdentifier = PartyIdSchemeIdentifier.DUNS.toString()
                     )
                 ),
-                PartyName = "party01",
-                PostalAddress = listOf(
+                partyName = "party01",
+                postalAddress = listOf(
                     getAddress()
                 ),
-                PartyTaxScheme = listOf(
+                partyTaxScheme = listOf(
                     PartyTaxScheme(
-                        CompanyID = Id(IdContent = "SE1234567801"),
-                        TaxScheme = Id(IdContent = "AVT", IdSchemeIdentifier = "UN/ECE 5153", IdAgencyIdentifier = "6")
+                        companyId = Id(idContent = "SE1234567801"),
+                        taxScheme = Id(idContent = "AVT", idSchemeIdentifier = "UN/ECE 5153", idAgencyIdentifier = "6")
                     )
                 ),
-                PartyLegalEntity = listOf(
+                partyLegalEntity = listOf(
                     PartyLegalEntity(
-                        CompanyID = Id(
-                            IdContent = "5512895671",
-                            IdSchemeIdentifier = "Alberta Business Registry",
-                            IdAgencyIdentifier = "12"
+                        companyId = Id(
+                            idContent = "5512895671",
+                            idSchemeIdentifier = "Alberta Business Registry",
+                            idAgencyIdentifier = "12"
                         ),
-                        RegistrationName = "Alpine Service Inc.",
-                        RegistrationAddress = getAddress()
+                        registrationName = "Alpine Service Inc.",
+                        registrationAddress = getAddress()
                     )
                 ),
-                Contact = listOf(Contact(Telephone = "403-123-4567", Email = "al@cbx.com")),
-                Person = listOf(Person(FirstName = "tester")),
+                contact = listOf(Contact(telephone = "403-123-4567", email = "al@cbx.com")),
+                person = listOf(Person(firstName = "tester")),
             ),
-            SellerSupplierParty = Party(
-                PartyIdentification = listOf(
+            sellerSupplierParty = Party(
+                partyIdentification = listOf(
                     Id(
-                        IdContent = "party02", //todo: correct as cbx int id
-                        IdSchemeIdentifier = PartyIdSchemeIdentifier.CBX.toString()
+                        idContent = "party02", //todo: correct as cbx int id
+                        idSchemeIdentifier = PartyIdSchemeIdentifier.CBX.toString()
                     ),
                     Id(
-                        IdContent = "123456789",
-                        IdSchemeIdentifier = PartyIdSchemeIdentifier.DUNS.toString()
+                        idContent = "123456789",
+                        idSchemeIdentifier = PartyIdSchemeIdentifier.DUNS.toString()
                     )
                 ),
-                PartyName = "party02"
+                partyName = "party02"
             ),
-            Delivery = listOf(
+            delivery = listOf(
                 Delivery(
-                    DeliveryLocation = Location(Address = getAddress()),
-                    DeliveryParty = Party(
-                        PartyName = "Swedish trucking", PartyIdentification = listOf(
-                            Id(IdContent = "Party03", IdSchemeIdentifier = PartyIdSchemeIdentifier.CBX.toString())
+                    deliveryLocation = Location(address = getAddress()),
+                    deliveryParty = Party(
+                        partyName = "Swedish trucking", partyIdentification = listOf(
+                            Id(idContent = "Party03", idSchemeIdentifier = PartyIdSchemeIdentifier.CBX.toString())
                         )
                     ),
-                    DeliveryTerms = listOf(DeliveryTerm(SpecialTerms = "FOT"))
+                    deliveryTerms = listOf(DeliveryTerm(specialTerms = "FOT"))
                 )
             ),
-            AllowanceCharge = listOf(
+            allowanceCharge = listOf(
                 AllowanceCharge(
-                    AllowanceChargeReason = "Transport documents",
-                    Amount(AmountContent = 100.00)
+                    allowanceChargeReason = "Transport documents",
+                    Amount(amountContent = 100.00)
                 )
             ),
-            TaxTotal = listOf(TaxTotal(TaxAmount = Amount(100.00))),
-            AnticipatedMonetaryTotal = MonetaryTotal(
-                LineExtensionAmount = Amount(AmountContent = 6225.00),
-                AllowanceTotalAmount = Amount(AmountContent = 100.00),
-                ChargeTotalAmount = Amount(AmountContent = 100.00),
-                PayableAmount = Amount(AmountContent = 6225.00)
+            taxTotal = listOf(TaxTotal(taxAmount = Amount(100.00))),
+            anticipatedMonetaryTotal = MonetaryTotal(
+                lineExtensionAmount = Amount(amountContent = 6225.00),
+                allowanceTotalAmount = Amount(amountContent = 100.00),
+                chargeTotalAmount = Amount(amountContent = 100.00),
+                payableAmount = Amount(amountContent = 6225.00)
             ),
-            OrderLine = listOf(
+            orderLine = listOf(
                 LineItem(
-                    ID = Id(IdContent = "1"),
-                    Item = Item(
-                        Name = "Hauling Service",
-                        Description = "ship water to fields",
-                        AdditionalItemProperty = listOf(
+                    id = Id(idContent = "1"),
+                    item = Item(
+                        name = "Hauling Service",
+                        description = "ship water to fields",
+                        additionalItemProperty = listOf(
                             AdditionalProperty(
-                                Name = "Service Type",
-                                Value = "Truck  Solvant"
+                                name = "Service Type",
+                                value = "Truck  Solvant"
                             )
                         )
                     ),
-                    Quantity = Quantity(QuantityContent = 1, QuantityUnitCode = "Hour"),
-                    Price = Price(PriceAmount = Amount(AmountContent = 50.00)),
+                    quantity = Quantity(quantityContent = 1, quantityUnitCode = "Hour"),
+                    price = Price(priceAmount = Amount(amountContent = 50.00)),
                 )
             )
         )
@@ -199,16 +201,20 @@ class OrderTest() {
     }
 
     fun getAddress() = Address(
-        BuildingNumber = "123",
-        StreetName = "8 Ave SW",
-        CityName = "Calgary",
-        CountrySubEntity = "Alberta",
-        Country = "Canada"
+        buildingNumber = "123",
+        streetName = "8 Ave SW",
+        cityName = "Calgary",
+        countrySubEntity = "Alberta",
+        country = "Canada"
     )
 
-    fun getMapper() = jacksonObjectMapper()
+    fun getMapper() = ObjectMapper()
+        .registerModule(JavaTimeModule())
+//        .registerModule(KotlinModule())
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+//        .registerModule(JavaTimeModule())
 //        .serializationInclusion(JsonInclude.Include.NON_NULL)
 //        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 //        .addModule(KotlinModule()).build()
