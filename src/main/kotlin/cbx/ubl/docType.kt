@@ -3,14 +3,15 @@ package cbx.ubl
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import java.time.LocalDate
-import java.time.LocalDateTime
+//import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.OffsetDateTime
 
 data class Order(
     val cbxVersionId: String? = "0.1",
     val orderNumber: String,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    val issueDateTime: LocalDateTime,
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    val issueDateTime: OffsetDateTime,
     val documentCurrencyCode: CurrencyCode? = CurrencyCode.USD,
     val buyerCustomerParty: Party,
     val sellerSupplierParty: Party,
@@ -32,7 +33,7 @@ data class Order(
     val validityPeriod: Period? = null,
 
 
-)
+    )
 
 data class Invoice(
     val AccountingCost: String?,

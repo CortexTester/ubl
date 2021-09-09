@@ -1,7 +1,6 @@
 package cbx.ubl
 
-import com.fasterxml.jackson.annotation.JsonFormat
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 data class Id(
     val idContent: String,
@@ -68,6 +67,7 @@ data class Amount(
 
 data class Attachment(
     val embeddedDocumentBinaryObject: EmbeddedDocumentBinaryObject? = null,
+    val fileName: String? = null,
     val externalReference: String? = null //url
 )
 
@@ -78,10 +78,12 @@ data class AdditionalProperty(
 
 
 data class Period(
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    val endDate: LocalDateTime,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    val startDate: LocalDateTime
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+//    val endDate: LocalDateTime,
+    val endDate: OffsetDateTime,
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+//    val startDate: LocalDateTime
+    val startDate: OffsetDateTime
 )
 
 data class Quantity(

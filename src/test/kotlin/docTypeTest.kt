@@ -29,18 +29,18 @@ import cbx.ubl.Quantity
 import cbx.ubl.ReferenceSchemeIdentifier
 import cbx.ubl.TaxTotal
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationConfig
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.Month
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import org.junit.jupiter.api.Test
+
 
 //import org.assertj.core.api.Assertions.assertThat
 //import org.hamcrest.MatcherAssert.assertThat
@@ -57,10 +57,11 @@ class OrderTest() {
 
     @Test
     fun `Regular Order as request`() {
+        val zoneOffSet = ZoneOffset.of("+07:00")
         var order = Order(
             cbxVersionId = "0.1",
             orderNumber = "test order 01",
-            issueDateTime = LocalDateTime.of(2021, 8,11, 11, 10, 42),
+            issueDateTime = OffsetDateTime.now(zoneOffSet),//LocalDateTime.of(2021, 8,11, 11, 10, 42),
             note = "This is Order type unit test",
             documentCurrencyCode = CurrencyCode.USD,
             accountingCostCode = listOf(
@@ -70,8 +71,8 @@ class OrderTest() {
                 )
             ),
             validityPeriod = Period(
-                startDate = LocalDateTime.of(2021, Month.AUGUST, 2, 0, 0, 0, 0),
-                endDate = LocalDateTime.of(2021, Month.NOVEMBER, 2, 0, 0, 0, 0)
+                startDate = OffsetDateTime.now(zoneOffSet),//LocalDateTime.of(2021, Month.AUGUST, 2, 0, 0, 0, 0),
+                endDate = OffsetDateTime.now(zoneOffSet)//LocalDateTime.of(2021, Month.NOVEMBER, 2, 0, 0, 0, 0)
             ),
             quotationDocumentReference = listOf(
                 DocumentReference(
@@ -208,9 +209,18 @@ class OrderTest() {
         country = "Canada"
     )
 
+//    fun getMapper() = ObjectMapper()
+//        .registerModule(JavaTimeModule())
+////        .registerModule(KotlinModule())
+//        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+//        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
     fun getMapper() = ObjectMapper()
         .registerModule(JavaTimeModule())
-//        .registerModule(KotlinModule())
+        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        .enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID)
+        .setDateFormat(StdDateFormat().withColonInTimeZone(true))
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
